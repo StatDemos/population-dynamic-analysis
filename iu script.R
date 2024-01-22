@@ -8,7 +8,7 @@ library(readxl)
 # convert to LFQ 
 
 library(readr)
-lfq1 <- read_csv("C:/Users/STAT/Downloads/iu.csv")
+lfq1 <- read_csv("iu.csv")
 
 View(lfq1)
 
@@ -102,3 +102,4 @@ alba2 <- ELEFAN(
   hide.progressbar = TRUE # change to 'TRUE' to follow algorithm's progression
 )
 points(alba2$par["Linf"], alba2$par["K"], pch="*", cex=2, col=2)
+
