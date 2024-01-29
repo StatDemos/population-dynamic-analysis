@@ -131,3 +131,24 @@ lt <- lfqFitCurves(lfq_bin,
 
 # Here par is growth parameters as resulting from e.g. ELEFAN
 lfq_bin <- lfqModify(lfq_bin, par = res_GA$par)
+
+#-------------------------------------------------------------------------------
+# Estimation of natural mortality rate
+
+## estimation of M
+Ms <- M_empirical(Linf = lfq_bin$par$Linf, K_l = lfq_bin$par$K, method = "Then_growth")
+Ms
+
+## assign M to data set
+lfq_bin$par$M <- as.numeric(Ms)
+
+
+
+
+
+
+
+
+
+
+
