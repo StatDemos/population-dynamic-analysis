@@ -74,3 +74,41 @@ res_GA <- ELEFAN_GA(lfq_bin,
 ## show results
 res_GA$par
 res_GA$Rn_max
+
+
+#-------------------------------------------------------------------------------
+# The jack knife technique allows to estimate a confidence interval around the parameters of the soVBGF
+
+## list for results
+JK <- vector("list", length(lfq_bin$dates))
+
+## loop
+for(i in 1:length(lfq_bin$dates)){
+  loop_data <- list(dates = lfq_bin$dates[-i],
+                    midLengths = lfq_bin$midLengths,
+                    catch = lfq_bin$catch[,-i])
+  tmp <- ELEFAN_GA(loop_data, 
+                   MA = ma, 
+                   seasonalised = TRUE,
+                   maxiter = 50, 
+                   addl.sqrt = FALSE,
+                   low_par = low_par,
+                   up_par = up_par,
+                   monitor = FALSE, 
+                   plot = FALSE)
+  JK[[i]] <- unlist(c(tmp$par, list(Rn_max=tmp$Rn_max)))
+}
+
+## bind list into dataframe
+JKres <- do.call(cbind, JK)
+
+## mean
+JKmeans <- apply(as.matrix(JKres), MARGIN = 1, FUN = mean)
+
+## confidence intervals
+JKconf <- apply(as.matrix(JKres), MARGIN = 1, FUN = function(x) quantile(x, probs=c(0.025,0.975)))
+JKconf <- t(JKconf)
+colnames(JKconf) <- c("lower","upper")
+
+## show results
+JKconf
