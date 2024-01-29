@@ -112,3 +112,15 @@ colnames(JKconf) <- c("lower","upper")
 
 ## show results
 JKconf
+
+
+## plot LFQ and growth curves (Only for ELEFAN GA)
+plot(lfq_bin_res, Fname = "rcounts",date.axis = "modern", ylim=c(50,110))
+
+lt <- lfqFitCurves(lfq_bin, 
+                   par = list(Linf=112, K=0.6, t_anchor=0.57, C=0.4, ts=0),
+                   draw = TRUE, col = "grey", lty = 1, lwd=1.5)
+
+lt <- lfqFitCurves(lfq_bin, 
+                   par = res_GA$par,
+                   draw = TRUE, col = "darkgreen", lty = 1, lwd=1.5)
