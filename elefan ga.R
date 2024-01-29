@@ -142,6 +142,23 @@ Ms
 ## assign M to data set
 lfq_bin$par$M <- as.numeric(Ms)
 
+#-------------------------------------------------------------------------------
+# Estimation of fishing mortality rates and gear selectivity
+
+## define plus group as largest length class smaller than Linf
+plus_group <- lfq_bin$midLengths[max(which(lfq_bin$midLengths < lfq_bin$par$Linf))]
+
+## summarise catch matrix into vector and add plus group
+lfq_catch_vec <- lfqModify(lfq_bin, vectorise_catch = TRUE, plus_group = plus_group)
+
+## run catch curve
+res_cc <- catchCurve(lfq_catch_vec, catch_columns = c(1,2,3))
+res_cc <- catchCurve(lfq_catch_vec, catch_columns = c(1,2,3), reg_int = c(6,10), calc_ogive = TRUE)
+
+## assign estimates to the data list (parameter estimate for fishing mortality rate)
+lfq_catch_vec$par$Z <- res_cc$Z
+lfq_catch_vec$par$FM <- as.numeric(lfq_catch_vec$par$Z - lfq_catch_vec$par$M)
+lfq_catch_vec$par$FM
 
 
 
