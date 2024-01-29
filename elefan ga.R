@@ -1,0 +1,76 @@
+# load package
+
+library(TropFishR)
+library(readr)
+library(readxl)
+
+# convert to LFQ 
+lfq <- read_csv("iu2.csv") # Using data arrangement 2
+
+View(lfq)
+
+lfq$DATE <- as.Date(lfq$DATE, format = "%d/%m/%Y")
+
+lfqnew <- lfqCreate(data = lfq, Lname = "Length", Dname = "DATE", Fname = "Frequency")
+
+plot(lfqnew, Fname = "catch")
+
+?lfqCreate
+
+#Growth parameters
+
+## set seed value for reproducible results
+set.seed(1)
+
+## adjust bin size
+lfq_bin <- lfqModify(lfqnew, bin_size = 5)
+
+## plot raw and restructured LFQ data
+ma <- 5
+lfq_bin_res <- lfqRestructure(lfq_bin, MA = 5, addl.sqrt = FALSE)
+
+
+plot(lfq_bin_res, Fname = "catch", date.axis = "modern")
+plot(lfq_bin_res, Fname = "rcounts", date.axis = "modern")
+
+
+################################################################################
+
+#-------------------------------------------------------------------------------
+# Biological stock characteristics
+# Growth parameters
+
+
+## coarse estimate of Linf
+linf_guess <- max(lfq_bin$midLengths) / 0.95
+
+## lower search space bounds
+low_par <- list(Linf = 0.8 * linf_guess,
+                K = 0.01,
+                t_anchor = 0,
+                C = 0,
+                ts = 0)
+
+## upper search space bounds
+up_par <- list(Linf = 1.2 * linf_guess,
+               K = 1,
+               t_anchor = 1,
+               C = 1,
+               ts = 1)
+
+
+#-------------------------------------------------------------------------------
+# Parameter optimization Method 2
+## Run ELEFAN with genetic algorithm
+res_GA <- ELEFAN_GA(lfq_bin, 
+                    MA = ma, 
+                    seasonalised = TRUE,
+                    maxiter = 50, 
+                    addl.sqrt = FALSE,
+                    low_par = low_par,
+                    up_par = up_par,
+                    monitor = FALSE)
+
+## show results
+res_GA$par
+res_GA$Rn_max
