@@ -124,3 +124,10 @@ lt <- lfqFitCurves(lfq_bin,
 lt <- lfqFitCurves(lfq_bin, 
                    par = res_GA$par,
                    draw = TRUE, col = "darkgreen", lty = 1, lwd=1.5)
+
+## assign estimates to the data list
+# For further analysis, we use the outcomes of ELFAN with genetic algorithm 
+# by adding them to the Thumbprint Emperor data list.
+
+# Here par is growth parameters as resulting from e.g. ELEFAN
+lfq_bin <- lfqModify(lfq_bin, par = res_GA$par)
