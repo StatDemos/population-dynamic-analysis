@@ -161,6 +161,77 @@ lfq_catch_vec$par$FM <- as.numeric(lfq_catch_vec$par$Z - lfq_catch_vec$par$M)
 lfq_catch_vec$par$FM
 
 
+################################################################################
+# Stock status
+
+# Exploitation rate
+
+# The exploitation rate is defined as E = F/Z and relative to the reference level of 0.5 and
+# provides a simple indication of the stock status.
+
+lfq_catch_vec$par$E <- lfq_catch_vec$par$FM / lfq_catch_vec$par$Z
+lfq_catch_vec$par$E 
+
+# For this data set, the exploitation rate is equal to 0.49 and, thus, does not indicate overfishing.
+
+#-------------------------------------------------------------------------------
+# Yield per recruit modelling
+
+## assign length-weight parameters to the data list
+lfq_catch_vec$par$a <- 0.015
+lfq_catch_vec$par$b <- 3
+
+## assign maturity parameters
+lfq_catch_vec$par$Lmat <- 35
+lfq_catch_vec$par$wmat <- 5
+
+
+## list with selectivity parameters
+selectivity_list <- list(selecType = "trawl_ogive",
+                         L50 = res_cc$L50, L75 = res_cc$L75)
+selectivity_list
+
+
+## Thompson and Bell model with changes in F
+TB1 <- predict_mod(lfq_catch_vec, type = "ThompBell",
+                   FM_change = seq(0,1.5,0.05),
+                   stock_size_1 = 1,
+                   curr.E = lfq_catch_vec$par$E,
+                   s_list = selectivity_list,
+                   plot = FALSE, hide.progressbar = TRUE)
+
+## Thompson and Bell model with changes in F and Lc
+TB2 <- predict_mod(lfq_catch_vec, type = "ThompBell",
+                   FM_change = seq(0,1.5,0.1),
+                   Lc_change = seq(25,50,0.1),
+                   stock_size_1 = 1,
+                   curr.E = lfq_catch_vec$par$E,
+                   curr.Lc = res_cc$L50,
+                   s_list = selectivity_list,
+                   plot = FALSE, hide.progressbar = TRUE)
+
+## plot results
+par(mfrow = c(2,1), mar = c(4,5,2,4.5), oma = c(1,0,0,0))
+plot(TB1, mark = TRUE)
+mtext("(a)", side = 3, at = -0.1, line = 0.6)
+plot(TB2, type = "Isopleth", xaxis1 = "FM", mark = TRUE, contour = 6)
+mtext("(b)", side = 3, at = -0.1, line = 0.6)
+
+## Biological reference levels
+TB1$df_Es
+
+## Current yield and biomass levels
+TB1$currents
+
+
+
+
+
+
+
+
+
+
 
 
 
