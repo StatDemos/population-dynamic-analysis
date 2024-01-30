@@ -85,6 +85,18 @@ tmp <- lfqFitCurves(lfq_bin2_res, par = list(Linf=11, K=2.5, t_anchor=0.5),
 
 PW <- powell_wetherall(lfq_bin2_res, catch_columns = 1:7, reg_int = c(2,9) )
 
+PW1 <- powell_wetherall(lfq_bin2_res, catch_columns = 1:20, reg_int = c(40,60) )
+
+PW2 <- powell_wetherall(lfq_bin2_res, catch_columns = 1:20)
+
+PW2$Linf_est
+
+
+
+
+
+
+
 PW$Linf_est
 PW$confidenceInt_Linf
 
